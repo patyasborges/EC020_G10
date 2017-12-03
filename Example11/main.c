@@ -136,8 +136,8 @@ int main(void) {
 
 	if (xQueue != NULL ) {
 		xTaskCreate(vSenderReadTask, "READ", 240, NULL, 1, NULL);
+		xTaskCreate(vWWWTask, "WWW", 240, NULL, 1, NULL);
 		xTaskCreate(vReceiverWriteTask, "WRITE", 240, NULL, 2, NULL);
-		//xTaskCreate(vWWWTask, "WWW", 240, NULL, 2, NULL);
 
 		vTaskStartScheduler();
 	} else {
@@ -257,16 +257,21 @@ static void vSenderReadTask(void *pvParameters) {
 
 static void vWWWTask(void *pvParameters) {
 
-	xData1 lValueToSend;
+	xData1 lReceivedValue;
+	portBASE_TYPE xStatus;
+	const portTickType xTicksToWait = 100 / portTICK_RATE_MS;
 
-	while (1) {
+	for (;;) {
+		if (uxQueueMessagesWaiting(xQueue) != 0) {
+			//
+		}
 
-		lValueToSend.xoff = 1;
-		lValueToSend.yoff = 2;
-		lValueToSend.zoff = 3;
+		xStatus = xQueueReceive( xQueue, &lReceivedValue, xTicksToWait );
 
-		printHttp(lValueToSend);
-		//taskYIELD();
+		if (xStatus == pdPASS) {
+			printHttp(lReceivedValue);
+			taskYIELD();
+		}
 	}
 }
 

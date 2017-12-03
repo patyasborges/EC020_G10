@@ -119,7 +119,7 @@ void CANActivity_IRQHandler(void) ALIAS(IntDefaultHandler);
 
 extern void xPortSysTickHandler(void);
 extern void xPortPendSVHandler(void);
-extern void vPortSVCHandler( void );
+extern void vPortSVCHandler(void);
 
 //*****************************************************************************
 //
@@ -169,6 +169,10 @@ void (* const g_pfnVectors[])(void) = {
 	0,										// Reserved
 	xPortPendSVHandler,                     // The PendSV handler
 	xPortSysTickHandler,                    // The SysTick handler
+
+	SVCall_Handler,							// SVCall handler									// Reserved
+	PendSV_Handler,							// The PendSV handler
+	SysTick_Handler,						// The SysTick handler
 
 	// Chip Level - LPC17
 	WDT_IRQHandler,							// 16, 0x40 - WDT
